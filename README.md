@@ -1,6 +1,6 @@
 # FedTools
 
-An open source Python library for the scraping of Federal Reserve data.
+An [open source][link2] Python library for the scraping of Federal Reserve data.
 
 By default, all modules within FedTools use 10 threads to increase scraping speed. By default, the Output is a 
 Pandas DataFrame, indexed by release date of the materials. Additional serialised storage methods are optional.
@@ -64,3 +64,4 @@ All parameters above are optional, with a short explanation of each parameter ou
 
 
 [hist]: <https://www.federalreserve.gov/monetarypolicy/fomc_historical_year.htm>
+[link2]: <https://pypi.org/project/FedTools/0.0.1/>
