@@ -30,7 +30,7 @@ Returns a Pandas DataFrame 'dataset', which contains all Meeting Minutes, indexe
 ```
 pip install FedTools
 from FedTools import BeigeBooks
-dataset = beige_books.find_beige_books()
+dataset = BeigeBooks().find_beige_books()
 
 BeigeBooks().pickle_data("DIRECTORY")
 ```
@@ -60,7 +60,7 @@ beige_books = BeigeBooks(
             thread_num = 10)
             
             
-dataset = BeigeBooks().find_beige_books()
+dataset = beige_books.find_beige_books()
 
 # serialise, save to "DIRECTORY":
 BeigeBooks().pickle_data("DIRECTORY")
