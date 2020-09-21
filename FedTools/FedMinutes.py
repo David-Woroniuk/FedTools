@@ -167,6 +167,12 @@ class MonetaryPolicyCommittee (object):
 
     self.dataset = pd.DataFrame(self.articles, index = pd.to_datetime(self.dates)).sort_index()
     self.dataset.columns = ['FOMC_Statements']
+    for i in range(len(self.dataset)):
+      self.dataset.iloc[i, 0] = self.dataset.iloc[i, 0].replace('\n', ' ')
+      self.dataset.iloc[i, 0] = self.dataset.iloc[i, 0].replace('\r', ' ')
+      self.dataset.iloc[i, 0] = self.dataset.iloc[i, 0].replace('\t', '')
+      self.dataset.iloc[i, 0] = self.dataset.iloc[i, 0].replace('\xa0', '')
+      
     return self.dataset
 
 
