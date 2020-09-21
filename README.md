@@ -63,7 +63,7 @@ beige_books = BeigeBooks(
 dataset = beige_books.find_beige_books()
 
 # serialise, save to "DIRECTORY":
-BeigeBooks().pickle_data("DIRECTORY")
+beige_books.pickle_data("DIRECTORY")
 ```
 
 All parameters above are optional, with a short explanation of each parameter outlined below:
