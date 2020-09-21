@@ -40,7 +40,7 @@ class MonetaryPolicyCommittee (object):
                calendar_url = 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
                historical_split = 2014,
                verbose = True,
-               thread_num = 40
+               thread_num = 10
                ):
       
       self.main_url = main_url
