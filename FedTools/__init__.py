@@ -9,3 +9,4 @@ import threading
 
 from .FedMinutes import MonetaryPolicyCommittee
 from .Beigebook import BeigeBooks
+from .FedMins import FederalReserveMins
