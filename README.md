@@ -45,7 +45,7 @@ dataset = FederalReserveMins().find_minutes()
 FederalReserveMins().pickle_data("DIRECTORY")
 ```
 
-## Edit default input arguments:
+## Edit Default Input Arguments
 ```sh
 monetary_policy = MonetaryPolicyCommittee(
             main_url = 'https://www.federalreserve.gov', 
