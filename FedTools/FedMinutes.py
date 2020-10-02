@@ -19,6 +19,7 @@ class MonetaryPolicyCommittee (object):
   
   main_url: Federal Reserve Open Monetary Policy (FOMC) website URL. (str)
   calendar_url: URL containing a list of FOMC Meeting dates. (str)
+  start_year: The year which the user wishes to begin parsing from. (int)
   historical_split: year considered as historical (historical vs current archive list). (int) 
   verbose: boolean determining printing during scraping. (bool)
   thread_num: the number of threads to use for web scraping  
@@ -155,8 +156,7 @@ class MonetaryPolicyCommittee (object):
     where the index corresponds to the meeting date.
     -------------------------------Arguments------------------------------------------ 
   
-    start_year: The year which the user wishes to begin parsing from. If start_year
-    is within the last 5 years, this value is ignored.
+    N/A
     -------------------------------Returns-------------------------------------------- 
     dataset - a DataFrame containing meeting minutes, indexed by meeting date.
     '''
