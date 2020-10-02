@@ -15,35 +15,42 @@ class BeigeBooks(object):
   This class firstly extracts the release month of each previous Beige Book.
   Subsequently, the class extracts the Beige Book, placing results into a 
   DataFrame, indexed by release date.
-
   -------------------------------Arguments------------------------------------------- 
-
   main_url: Federal Reserve Open Monetary Policy (FOMC) website URL. (str)
-
   beige_book_url: Beige Book directory page. (str)
-
+  start_year: The year which the user wishes to begin parsing from (>=1996). (int)
   historical_split: year considered as historical (historical vs current archive list). (int) 
-
   verbose: boolean determining printing during scraping. (bool)
-
   thread_num: the number of threads to use for web scraping  
-
   -------------------------------Returns--------------------------------------------- 
-
   dataset - a DataFrame containing Beige Books, indexed by release date.
-
   '''
 
   def __init__(self,
                main_url='https://www.federalreserve.gov',
                beige_book_url='https://www.federalreserve.gov/monetarypolicy/beige-book-default.htm',
+               start_year = None,
                historical_split=2019,
                verbose=True,
                thread_num=10
                ):
+      
+    if start_year is None:
+      start_year = 1996
+    elif start_year < 1996:
+      raise TypeError("The start_year argument must be 1996 or later.")
+    elif isinstance(start_year, int) is False:
+      raise TypeError("The start_year argument must be a integer object.")
+
+    if isinstance(historical_split, int) is False:
+      raise TypeError("The historical_split argument must be an integer object. Please refer to https://www.federalreserve.gov/monetarypolicy/beige-book-archive.htm for the start year")
+
+    if isinstance(thread_num, int) is False:
+      raise TypeError("The thread_num argument must be an integer object.")
 
     self.main_url = main_url
     self.beige_book_url = beige_book_url
+    self.start_year = start_year
     self.HISTORICAL_SPLIT = historical_split
     self.verbose = verbose
     self.THREAD_NUM = thread_num
@@ -56,7 +63,6 @@ class BeigeBooks(object):
     '''
     internal function which constructs the links of all FOMC meetings, 
     beggining at 'start_year' and ending at current year.
-
     '''
 
     if self.verbose:
@@ -95,7 +101,6 @@ class BeigeBooks(object):
     internal function which adds the related article for 1 link to the instance variable.
     'index' is the index in the article to add to. Due to multithreading, articles must be
     stored in the correct order.
-
     '''
     # write a dot as progress report:
     if self.verbose:
@@ -105,7 +110,7 @@ class BeigeBooks(object):
     # append date of article content appropriately:
     self.dates.append(self._find_date_from_link(link))
 
-    # conditional scoekts depending on length of links:
+    # conditional sockets depending on length of links:
     if len(link) <= 35:
       Beige_Book_Output_socket = urlopen(self.main_url + link)
       Beige_Book_Output = BeautifulSoup(Beige_Book_Output_socket, 'html.parser')
@@ -146,23 +151,17 @@ class BeigeBooks(object):
     for row in range(len(self.articles)):
       self.articles[row] = self.articles[row].strip()
 
-  def find_beige_books(self, start_year=1996):
+  def find_beige_books(self):
     '''
     This function returns beige book information within a pandas dataframe, 
     where the index corresponds to the release date.
-
     -------------------------------Arguments------------------------------------------ 
-
-    start_year: The year which the user wishes to begin parsing from. This year must be 
-    greater than or equal to 1996 (start_year >= 1996).
-
+    N/A
     -------------------------------Returns-------------------------------------------- 
-
     dataset - a DataFrame containing Beige Books, indexed by release date.
-
     '''
 
-    self._obtain_links(start_year)
+    self._obtain_links(self.start_year)
     print("Extracting the past {} Beige Books.".format(len(self.links)))
     self._multithreaded_article_retrieval()
 
@@ -184,15 +183,10 @@ class BeigeBooks(object):
   def pickle_data(self, directory="../data/Beige_Books.pkl"):
     '''
     This function pickles and stores the scraped dataset in a predefined directory.
-
     -------------------------------Arguments------------------------------------------ 
-
     directory: The filepath where the pickled dataset should be stored.
-
     -------------------------------Returns-------------------------------------------- 
-
     A pickled dataframe stored within the predefined directory.
-
     '''
     if directory:
       if self.verbose:
