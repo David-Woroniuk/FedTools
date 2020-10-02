@@ -15,35 +15,41 @@ class FederalReserveMins (object):
   This class firstly extracts the release date of each previous Federal Reserve 
   Minutes release. Subsequently, the class extracts the Federal Reserve Minutes,
   placing results into a DataFrame, indexed by release date.
-
   -------------------------------Arguments------------------------------------------- 
   
   main_url: Federal Reserve Open Monetary Policy (FOMC) website URL. (str)
-
   calendar_url: URL containing a list of FOMC Meeting dates. (str)
-
+  start_year: The year which the user wishes to begin parsing from. (int)
   historical_split: year considered as historical (historical vs current archive list). (int) 
-
   verbose: boolean determining printing during scraping. (bool)
-
   thread_num: the number of threads to use for web scraping  
-
   -------------------------------Returns--------------------------------------------- 
-
   dataset - a DataFrame containing meeting minutes, indexed by meeting date.
-
   '''
 
   def __init__(self,
                main_url = 'https://www.federalreserve.gov',
                calendar_url = 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
+               start_year = None,
                historical_split = 2014,
                verbose = True,
                thread_num = 10
                ):
+    
+      if start_year is None:
+        start_year = 1990
+      elif isinstance(start_year, int) is False:
+        raise TypeError("The start_year argument must be a integer object.")
+
+      if isinstance(historical_split, int) is False:
+        raise TypeError("The historical_split argument must be an integer object. Please refer to https://www.federalreserve.gov/monetarypolicy/fomc_historical_year.htm for the start year")
+
+      if isinstance(thread_num, int) is False:
+        raise TypeError("The thread_num argument must be an integer object.")
       
       self.main_url = main_url
       self.calendar_url = calendar_url
+      self.start_year = start_year
       self.HISTORICAL_SPLIT = historical_split
       self.verbose = verbose
       self.THREAD_NUM = thread_num
@@ -58,7 +64,6 @@ class FederalReserveMins (object):
     '''
     internal function which constructs the links of all FOMC meetings, 
     beggining at 'start_year' and ending at current year.
-
     '''
 
     if self.verbose:
@@ -112,7 +117,6 @@ class FederalReserveMins (object):
     internal function which adds the related minutes for 1 link to the instance variable.
     'index' is the index in the article to add to. Due to multithreading, articles must be
     stored in the correct order.
-
     '''
     # write a dot as progress report:
     if self.verbose:
@@ -164,23 +168,17 @@ class FederalReserveMins (object):
       self.articles[row] = self.articles[row].strip()
 
 
-  def find_minutes(self, start_year = 1993):
+  def find_minutes(self):
     '''
     This function returns federal reserve minutes within a pandas dataframe, 
     where the index corresponds to the release date.
-
     -------------------------------Arguments------------------------------------------ 
-  
-    start_year: The year which the user wishes to begin parsing from. If start_year
-    is within the last 5 years, this value is ignored.
-
+    N/A
     -------------------------------Returns-------------------------------------------- 
-
     dataset - a DataFrame containing meeting minutes, indexed by meeting date.
-
     '''
 
-    self._obtain_links(start_year)
+    self._obtain_links(self.start_year)
     if self.verbose:
       print("Extracting Federal Reserve Minutes.")
     self._multithreaded_article_retrieval()
@@ -202,15 +200,11 @@ class FederalReserveMins (object):
   def pickle_data(self, directory):
     '''
     This function pickles and stores the scraped dataset in a predefined directory.
-
     -------------------------------Arguments------------------------------------------ 
   
     directory: The filepath where the pickled dataset should be stored.
-
     -------------------------------Returns-------------------------------------------- 
-
     A pickled dataframe stored within the predefined directory.
-
     '''
     if directory:
       if self.verbose:
