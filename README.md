@@ -1,5 +1,7 @@
 # FedTools
 
+[![Downloads](https://static.pepy.tech/personalized-badge/fedtools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/fedtools)
+
 An open source Python library for the scraping of Federal Reserve data.
 
 By default, all modules within FedTools use 10 threads to increase scraping speed. By default, the Output is a 
