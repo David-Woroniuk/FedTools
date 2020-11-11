@@ -1,6 +1,6 @@
 # FedTools
 
-[![Downloads](https://static.pepy.tech/personalized-badge/fedtools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/fedtools)
+[![Downloads](https://static.pepy.tech/personalized-badge/fedtools?period=total&units=international_system&left_color=black&right_color=blue&left_text=Downloads)](https://pepy.tech/project/fedtools)[![Downloads](https://pepy.tech/badge/fedtools/month)](https://pepy.tech/project/fedtools)
 
 An open source Python library for the scraping of Federal Reserve data.
 
