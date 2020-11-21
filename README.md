@@ -10,7 +10,7 @@ Pandas DataFrame, indexed by release date of the materials. Additional serialise
 ## Installation
 
 From Python:
-```
+```python
 pip install FedTools
 
 from FedTools import MonetaryPolicyCommittee
@@ -21,34 +21,34 @@ from FedTools import FederalReserveMins
 ## Usage
 
 Returns a Pandas DataFrame 'dataset', which contains all Meeting Minutes, indexed by Date and a '.pkl' file saved within "DIRECTORY":
-```
+```python
 pip install FedTools
 from FedTools import MonetaryPolicyCommittee
-dataset = MonetaryPolicyCommittee().find_statements()
 
+dataset = MonetaryPolicyCommittee().find_statements()
 MonetaryPolicyCommittee().pickle_data("DIRECTORY")
 ```
 
 Returns a Pandas DataFrame 'dataset', which contains all Beige Books, indexed by Date and a '.pkl' file saved within "DIRECTORY":
-```
+```python
 pip install FedTools
 from FedTools import BeigeBooks
-dataset = BeigeBooks().find_beige_books()
 
+dataset = BeigeBooks().find_beige_books()
 BeigeBooks().pickle_data("DIRECTORY")
 ```
 
 Returns a Pandas DataFrame 'dataset', which contains all Federal Reserve Minutes since 1993, indexed by Date and a '.pkl' file saved within "DIRECTORY":
-```
+```python
 pip install FedTools
 from FedTools import FederalReserveMins
-dataset = FederalReserveMins().find_minutes()
 
+dataset = FederalReserveMins().find_minutes()
 FederalReserveMins().pickle_data("DIRECTORY")
 ```
 
 ## Edit Default Input Arguments
-```sh
+```python
 monetary_policy = MonetaryPolicyCommittee(
             main_url = 'https://www.federalreserve.gov', 
             calendar_url = 'https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm',
