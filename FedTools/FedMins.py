@@ -26,7 +26,6 @@ class FederalReserveMins(object):
     :param verbose: boolean determining printing during scraping. (bool)
     :param thread_num: the number of threads to use for web scraping. (int)
     :return: dataset: a DataFrame containing meeting minutes, indexed by meeting date. (pd.DataFrame)
-
     """
 
     def __init__(self,
@@ -89,12 +88,10 @@ class FederalReserveMins(object):
                 historical_mins.extend(fed_mins_annual_soup.findAll('a', text='Minutes'))
                 for historical_min in historical_mins:
                     self.full_links.append(historical_min.attrs['href'])
-                    # catch all instances:
                     annual_links = [x for x in self.full_links if 'fomcminutes' in x]
                     annual_links.extend([x for x in self.full_links if 'MINUTES' in x])
                     annual_links.extend([x for x in self.full_links if 'minutes' in x])
 
-        # now find unique values:
         for x in annual_links:
             if x not in self.links:
                 self.links.append(x)
@@ -137,7 +134,7 @@ class FederalReserveMins(object):
             date = "{}/{}/{}".format(date[:4], date[4:6], date[6:])
         return date
 
-    def _add_article(self, link, index=None):
+    def _add_article(self, link: str, index: int = None):
         """
         This helper function adds the related minutes for 1 link to the instance variable.
         Multithreading stipulates that the articles must be stored in the correct order, where
@@ -151,15 +148,11 @@ class FederalReserveMins(object):
         if not isinstance(index, (type(None), int)):
             raise TypeError("The 'index' argument must either be a None type or a integer type.")
 
-        # write a dot as progress report:
         if self.verbose:
             sys.stdout.write(".")
             sys.stdout.flush()
 
-        # append date of article content appropriately:
         self.dates.append(self._find_date_from_link(link))
-
-        # depending on length of links, which link to open:
         if len(link) <= 50:
             fed_mins_output_socket = self._urlopen_with_ua(self.main_url + link)
             fed_mins_output = BeautifulSoup(fed_mins_output_socket, 'html.parser')
@@ -182,7 +175,6 @@ class FederalReserveMins(object):
 
         self.dates, self.articles = [], [''] * len(self.links)
         jobs = []
-        # initiate process, start threads:
         index = 0
         while index < len(self.links):
             if len(jobs) < self.THREAD_NUM:
@@ -257,4 +249,4 @@ class FederalReserveMins(object):
 
 if __name__ == '__main__':
     dataset = FederalReserveMins().find_minutes()
-    FederalReserveMins().pickle_data("DIRECTORY\\name.pkl")
+    FederalReserveMins().pickle_data("random_address.pkl")
