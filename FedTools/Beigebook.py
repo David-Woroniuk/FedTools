@@ -18,7 +18,6 @@ class BeigeBooks(object):
     This class firstly checks that the input arguments are of the correct type, followed
     by extracting the release month of each previous Beige Book. Subsequently, the Beige Book
     data is extracted, placing the results into a Pandas DataFrame.
-
     :param main_url: the Federal Reserve Open Monetary Policy (FOMC) website URL. (str)
     :param beige_book_url: the Beige Book directory page. (str)
     :param start_year: the year which the user wishes to begin parsing from. (int)
@@ -26,14 +25,13 @@ class BeigeBooks(object):
     :param verbose: boolean determining printing during scraping. (bool)
     :param thread_num: the number of threads to use for web scraping. (int)
     :return: dataset: a DataFrame containing meeting minutes, indexed by meeting date. (pd.DataFrame)
-
     """
 
     def __init__(self,
                  main_url: str = 'https://www.federalreserve.gov',
                  beige_book_url: str = 'https://www.federalreserve.gov/monetarypolicy/beige-book-default.htm',
                  start_year: int = 1996,
-                 historical_split: int = 2019,
+                 historical_split: int = 2022,
                  verbose: bool = True,
                  thread_num: int = 10
                  ):
@@ -61,7 +59,6 @@ class BeigeBooks(object):
         The helper function constructs the links of all FOMC meetings,
         beginning at the start_year' argument, and continuing to the current
         date.
-
         :param start_year: the year at which the link construction begins. (int)
         """
         if not isinstance(start_year, int):
@@ -74,6 +71,7 @@ class BeigeBooks(object):
         beige_book_socket = self._urlopen_with_ua(self.beige_book_url)
         soup = BeautifulSoup(beige_book_socket, 'html.parser')
         beige_books = soup.find_all('a', href=re.compile('^/monetarypolicy/beigebook\\d{6}.htm'))
+        beige_books += soup.find_all('a', href=re.compile('^/monetarypolicy/beigebook\\d{8}.htm'))
         self.links = [beige_book.attrs['href'] for beige_book in beige_books]
 
         if start_year <= self.HISTORICAL_SPLIT:
@@ -81,7 +79,7 @@ class BeigeBooks(object):
                 beige_book_annual_url = self.main_url + '/monetarypolicy/beigebook' + str(year) + '.htm'
                 beige_book_annual_socket = self._urlopen_with_ua(beige_book_annual_url)
                 bb_annual_soup = BeautifulSoup(beige_book_annual_socket, 'html.parser')
-                historical_statements = bb_annual_soup.findAll('a', text='Statement')
+                historical_statements = bb_annual_soup.findAll('a', string = re.compile('^HTML'))
                 for historical_statement in historical_statements:
                     self.links.append(historical_statement.attrs['href'])
 
@@ -91,7 +89,6 @@ class BeigeBooks(object):
         This helper function adds user agent credentials to the
         request, enabling the script to interact with the Federal
         Reserve website.
-
         :param url: the url to be queried, without a user agent. (str)
         :return: urlopen(req): the url opened using a user agent. (str)
         """
@@ -109,7 +106,6 @@ class BeigeBooks(object):
         This helper function determines the FOMC meeting date from the relevant link.
         The function firstly checks that the link is a string type, followed by parsing
         the string to generate the date. The date string is subsequently returned.
-
         :param link: the link string to be parsed for dates. (str)
         :return: date: the date string parsed from the link string. (str)
         """
@@ -128,7 +124,6 @@ class BeigeBooks(object):
         This helper function adds the related minutes for 1 link to the instance variable.
         Multithreading stipulates that the articles must be stored in the correct order, where
         the 'index' argument is the index in the article to add to.
-
         :param link: the link to be opened and data generated for. (str)
         :param index: the index associated with the link. (int)
         """
@@ -142,7 +137,7 @@ class BeigeBooks(object):
             sys.stdout.flush()
 
         self.dates.append(self._find_date_from_link(link))
-        if len(link) <= 35:
+        if not self.main_url in link:
             beige_book_output_socket = self._urlopen_with_ua(self.main_url + link)
             beige_book_output = BeautifulSoup(beige_book_output_socket, 'html.parser')
             paragraph_delimiter = beige_book_output.findAll('p')
@@ -186,7 +181,6 @@ class BeigeBooks(object):
         This function acts as the main public function of the class, returning the Beige Books
         by efficiently extracting the information from the FOMC Website. The function then places each
         Beige Book into a Pandas DataFrame, indexed by the meeting date string.
-
         :return: dataset: a Pandas DataFrame containing the meeting minutes, indexed by meeting date. (pd.DataFrame)
         """
         self._obtain_links(self.start_year)
@@ -217,7 +211,6 @@ class BeigeBooks(object):
         the appropriate extension. The folder is then created if necessary, followed by the
         data being written to the pickle file, where a boolean is returned to denote success / failure
         of the file write operation.
-
         :param directory: the directory to which the file should be written. (str)
         :return: bool: determines if the file was written correctly. (bool)
         """
@@ -240,4 +233,3 @@ class BeigeBooks(object):
 
 if __name__ == '__main__':
     dataset = BeigeBooks().find_beige_books()
-    
